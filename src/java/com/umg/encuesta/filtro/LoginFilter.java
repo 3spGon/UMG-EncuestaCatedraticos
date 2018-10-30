@@ -74,7 +74,7 @@ public class LoginFilter implements Filter {
         //El usuario no está logueado
         if (loginBean == null || !loginBean.estaLogeado()) {
             System.out.println("usuario no esta logueado");
-            res.sendRedirect(req.getContextPath() + "/faces/index.xhtml");
+            res.sendRedirect(req.getContextPath() + "index.xhtml");
             return;
         }
 
@@ -99,6 +99,10 @@ public class LoginFilter implements Filter {
         }
 
         if (urlStr.contains("/javax.faces.resource/")) {
+            return true;
+        }
+
+        if (urlStr.contains("jsessionid")) {
             return true;
         }
 

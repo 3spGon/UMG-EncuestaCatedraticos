@@ -19,8 +19,16 @@ public class LoginBean implements Serializable {
     private String nombre;
     private String clave;
     private String tipo;
-    private boolean logeado = false;
+    private boolean logeado = true;
 
+    public LoginBean() {
+        nombre="";
+        clave="";
+        tipo="";
+    }
+
+    
+    
     public boolean estaLogeado() {
         return logeado;
     }
@@ -55,8 +63,9 @@ public class LoginBean implements Serializable {
         }
         FacesContext.getCurrentInstance().addMessage(null, msg);
         context.addCallbackParam("estaLogeado", logeado);
+
         if (logeado) {
-            context.addCallbackParam("view", "faces/pages/gestiones/gauge.xhtml");
+            context.addCallbackParam("view", "/gauge.xhtml");
         }
     }
 
