@@ -16,9 +16,9 @@ import org.primefaces.context.RequestContext;
 public class LoginBean implements Serializable {
 
     private static final long serialVersionUID = -2152389656664659476L;
-    private String nombre;
-    private String clave;
-    private String tipo;
+    private String nombre="";
+    private String clave="";
+    private String tipo="A";
     private boolean logeado = false;
 
     public boolean estaLogeado() {
@@ -41,11 +41,22 @@ public class LoginBean implements Serializable {
         this.clave = clave;
     }
 
+    public String getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(String tipo) {
+        this.tipo = tipo;
+    }
+    
+    
+
     public void login(ActionEvent actionEvent) {
         RequestContext context = RequestContext.getCurrentInstance();
         FacesMessage msg = null;
         if (nombre != null && nombre.equals("admin") && clave != null
                 && clave.equals("admin")) {
+            tipo="A";
             logeado = true;
             msg = new FacesMessage(FacesMessage.SEVERITY_INFO, "Bienvenid@", nombre);
         } else {
