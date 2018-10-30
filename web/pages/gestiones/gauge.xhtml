@@ -8,25 +8,45 @@
         <title>Facelet Title</title>
     </h:head>
     <h:body>
+        
+        <p:growl id="growl" showDetail="true" life="4500" />
         <h:form>
             <p:commandLink id="logout"
                            actionListener="#{loginBean.logout}"
-                           style="margin-right:20px;"
-                           oncomplete="logout(xhr, status, args)">
+                           style="margin-right:20px;">
+                <!--  oncomplete="logout(xhr, status, args)"-->
 
                 <h:outputText value="logout" />
             </p:commandLink>
             <p:commandButton id="boton" actionListener="#{loginBean.logout}" value="boton"/>
         </h:form>
 
+
+        <p:panel  styleClass="fondopanel" style="height: auto; width: 900px; margin-top: 0px;  margin-left:20px;  " >
+
+            <h:form id="piform" enctype="multipart/form-data">
+
+                <h:panelGrid style="width: 100%; margin-bottom: 20px" columns="1">
+                    <h1 style=" font-size: 30px; font-weight: bold; color: #5060BA; float: left; margin-left: 5px">Carga Masiva de Clientes</h1>
+
+                    <p:separator></p:separator>
+
+                </h:panelGrid>
+
+
+                <p:fileUpload id="fileUpload"  multiple="false"  auto="false"    mode="advanced" update=":growl" label="Examinar..."  allowTypes="/(\.|\/)(xlsx)$/" invalidSizeMessage="El tamaño máximo del archivo es de 500 Megabyte" invalidFileMessage="El archivo debe ser .xlsx"   fileUploadListener="#{fileUploadView.fileuploaded}" />
+
+
+            </h:form>
+        </p:panel>
     </h:body> 
 
     <script type="text/javascript">
-        function logout(xhr, status, args) {
-            setTimeout(function () {
-                window.location = '../../index.xhtml';
-            }, 500);
-        }
+        /*function logout(xhr, status, args) {
+         setTimeout(function () {
+         window.location = '/index.xhtml';
+         }, 500);
+         }*/
     </script>
 </html>
 

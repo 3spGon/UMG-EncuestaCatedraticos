@@ -8,4 +8,9 @@
         <managed-bean-class>com.umg.encuestas.bean.LoginBean</managed-bean-class>
         <managed-bean-scope>session</managed-bean-scope>
     </managed-bean>
+    <managed-bean>
+        <managed-bean-name>fileUploadView</managed-bean-name>
+        <managed-bean-class>com.umg.encuestas.bean.FileUploadView</managed-bean-class>
+        <managed-bean-scope>view</managed-bean-scope>
+    </managed-bean>
 </faces-config>

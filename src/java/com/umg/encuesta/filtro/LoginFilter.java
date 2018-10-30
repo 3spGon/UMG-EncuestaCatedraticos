@@ -18,6 +18,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 /**
  *
@@ -57,29 +58,50 @@ public class LoginFilter implements Filter {
         HttpServletResponse res = (HttpServletResponse) response;
         res.setHeader("Cache-Control", "no-cache, no-store, must-revalidate"); // HTTP 1.1.
         res.setHeader("Pragma", "no-cache"); // HTTP 1.0.
+        HttpSession session = req.getSession(true);
+        String pageRequested = req.getRequestURL().toString();
         // Obtengo el bean que representa el usuario desde el scope sesión
         LoginBean loginBean = (LoginBean) req.getSession().getAttribute("loginBean");
 
         //Proceso la URL que está requiriendo el cliente
         String urlStr = req.getRequestURL().toString().toLowerCase();
         boolean noProteger = noProteger(urlStr);
+        boolean noProtegerAlumno = noProtegerDeAlumno(urlStr);
         System.out.println(urlStr + " - desprotegido=[" + noProteger + "]");
+        System.out.println(urlStr + " - desprotegido alumno=[" + noProtegerAlumno + "]");
 
         //Si no requiere protección continúo normalmente.
-        if (noProteger(urlStr)) {
+        if (session.getAttribute("tipoUsuario") == "B") {
+            System.out.println("restriccion alumno");
+            if (noProtegerDeAlumno(urlStr)) {
+                System.out.println("restriccion alumno true");
+                chain.doFilter(request, response);
+                return;
+
+            } else {
+                System.out.println("restriccion alumno false");
+                res.sendRedirect(req.getContextPath() + "/faces/pages/gestiones/sinpermisosalumno.xhtml");
+                return;
+            }
+
+        } else {
+            if (noProteger(urlStr)) {
+                chain.doFilter(request, response);
+                return;
+            }
+
+            //El usuario no está logueado
+            System.out.println("usuario: [" + session.getAttribute("currentUser") + "] tipo: [" + session.getAttribute("tipoUsuario") + "]");
+            if (session.getAttribute("currentUser") == null) {
+                System.out.println("usuario no esta logueado");
+                res.sendRedirect(req.getContextPath() + "/faces/index.xhtml");
+                return;
+            }
+
+            //El recurso requiere protección, pero el usuario ya está logueado.
             chain.doFilter(request, response);
-            return;
         }
 
-        //El usuario no está logueado
-        if (loginBean == null || !loginBean.estaLogeado()) {
-            System.out.println("usuario no esta logueado");
-            res.sendRedirect(req.getContextPath() + "/faces/index.xhtml");
-            return;
-        }
-
-        //El recurso requiere protección, pero el usuario ya está logueado.
-        chain.doFilter(request, response);
     }
 
     private boolean noProteger(String urlStr) {
@@ -102,6 +124,36 @@ public class LoginFilter implements Filter {
             return true;
         }
 
+        if (urlStr.contains("jsessionid")) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private boolean noProtegerDeAlumno(String urlStr) {
+
+        if (urlStr.endsWith("/")) {
+            return true;
+        }
+        if (urlStr.endsWith("index.xhtml")) {
+            return true;
+        }
+
+        if (urlStr.contains("/javax.faces.resource/")) {
+            return true;
+        }
+
+        if (urlStr.contains("jsessionid")) {
+            return true;
+        }
+
+        if (urlStr.endsWith("inicioalumno.xhtml")) {
+            return true;
+        }
+        if (urlStr.endsWith("sinpermisosalumno.xhtml")) {
+            return true;
+        }
         return false;
     }
 
